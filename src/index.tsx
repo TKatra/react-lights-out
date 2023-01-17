@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/App/App';
 import './index.scss';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import reportWebVitals from './Shared/reportWebVitals';
 
 const root = ReactDOM.createRoot(
