@@ -9,7 +9,7 @@ class App extends React.Component <{}, AppState> {
     super(props);
 
     this.state = {
-      gameState: {
+      gameSetup: {
         playerName: '',
         playArea: {
           xLength: 5,
@@ -21,8 +21,8 @@ class App extends React.Component <{}, AppState> {
 
   setPlayerName = (newName: string) => {
     this.setState({
-      gameState: {
-        ...this.state.gameState,
+      gameSetup: {
+        ...this.state.gameSetup,
         playerName: newName
       }
     });
@@ -30,8 +30,8 @@ class App extends React.Component <{}, AppState> {
 
   setPlayArea = (newPlayArea: PlayArea) => {
     this.setState({
-      gameState: {
-        ...this.state.gameState,
+      gameSetup: {
+        ...this.state.gameSetup,
         playArea: newPlayArea
       }
     });
@@ -44,7 +44,7 @@ class App extends React.Component <{}, AppState> {
           <h1>Lights Out!</h1>
         </header>
 
-        <StartNewGame gameState={this.state.gameState}
+        <StartNewGame gameSetup={this.state.gameSetup}
                       onPlayerNameChange={this.setPlayerName}
                       onPlayAreaChange={this.setPlayArea} />
       </div>

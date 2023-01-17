@@ -9,10 +9,10 @@ function StartNewGame (props: startNewGameProps) {
     const updateValue = inputValue < minAreaLength ? minAreaLength : inputValue;
 
     if (angle === PlayAreaAngle.X) {
-      props.onPlayAreaChange({ xLength: updateValue, yLength: props.gameState.playArea.yLength })
+      props.onPlayAreaChange({ xLength: updateValue, yLength: props.gameSetup.playArea.yLength })
     }
     else {
-      props.onPlayAreaChange({ xLength: props.gameState.playArea.xLength, yLength: updateValue })
+      props.onPlayAreaChange({ xLength: props.gameSetup.playArea.xLength, yLength: updateValue })
     }
   }
 
@@ -25,7 +25,7 @@ function StartNewGame (props: startNewGameProps) {
           <label className='d-block mt-3'>Player Name</label>
           <input type="text"
                   className='col-12'
-                  value={props.gameState.playerName}
+                  value={props.gameSetup.playerName}
                   onChange={(e) => props.onPlayerNameChange(e.target.value)} />
 
           <label className='d-block mt-3'>Play Area Size</label>
@@ -33,13 +33,13 @@ function StartNewGame (props: startNewGameProps) {
             <input type="number"
                     className='col-5'
                     min={minAreaLength}
-                    value={props.gameState.playArea.xLength}
+                    value={props.gameSetup.playArea.xLength}
                     onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.X)} />
             <span className='col-2 text-center'>X</span>
             <input type="number"
                     className='col-5'
                     min={minAreaLength}
-                    value={props.gameState.playArea.yLength}
+                    value={props.gameSetup.playArea.yLength}
                     onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.Y)} />
           </div>
 

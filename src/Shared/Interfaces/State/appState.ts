@@ -1,5 +1,5 @@
-import { GameState } from "./gameState";
+import { GameSetup } from "../gameSetup";
 
 export interface AppState {
-  gameState: GameState;
+  gameSetup: GameSetup;
 }
