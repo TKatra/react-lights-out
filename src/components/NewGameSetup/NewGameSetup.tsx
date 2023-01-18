@@ -1,3 +1,4 @@
+import { GamePhase } from '../../Shared/Enum/gamePhase';
 import { PlayAreaAngle } from '../../Shared/Enum/playAreaAngles';
 import { Helpers } from '../../Shared/helpers';
 import { NewGameSetupProps } from '../../Shared/Interfaces/Props/NewGameSetupProps';
@@ -7,7 +8,7 @@ function NewGameSetup (props: NewGameSetupProps) {
   const minAreaLength = 3;
   const maxAreaLength = 50;
 
-  const onPlayAreaChange = (inputValue: number, angle: PlayAreaAngle) => {
+  const onPlayAreaChange = (inputValue: number, angle: PlayAreaAngle): void => {
     const updateValue = Helpers.NumberLimiter(inputValue, minAreaLength, maxAreaLength);
 
     if (angle === PlayAreaAngle.X) {
@@ -16,6 +17,12 @@ function NewGameSetup (props: NewGameSetupProps) {
     else {
       props.onPlayAreaChange({ xLength: props.gameSetup.playArea.xLength, yLength: updateValue })
     }
+  }
+
+  const isSetupValid = (): boolean => {
+    if (props.gameSetup.playerName === '') return false;
+
+    return true;
   }
 
   return (
@@ -46,9 +53,12 @@ function NewGameSetup (props: NewGameSetupProps) {
                     value={props.gameSetup.playArea.yLength}
                     onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.Y)} />
           </div>
-
           <div className='d-flex justify-content-end'>
-            <button className='btn btn-primary mt-3'>Start Game!</button>
+            <button className='btn btn-primary mt-3'
+                    disabled={!isSetupValid()}
+                    onClick={() => props.onStartNewGame(GamePhase.Play)}>
+              Start Game!
+            </button>
           </div>
         </div>
       </div>
