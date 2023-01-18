@@ -1,12 +1,14 @@
 import { PlayAreaAngle } from '../../Shared/Enum/playAreaAngles';
-import { startNewGameProps } from '../../Shared/Interfaces/Props/startNewGameProps';
-import styles from './StartNewGame.module.scss';
+import { Helpers } from '../../Shared/helpers';
+import { NewGameSetupProps } from '../../Shared/Interfaces/Props/NewGameSetupProps';
+import styles from './NewGameSetup.module.scss';
 
-function StartNewGame (props: startNewGameProps) {
+function NewGameSetup (props: NewGameSetupProps) {
   const minAreaLength = 3;
+  const maxAreaLength = 50;
 
   const onPlayAreaChange = (inputValue: number, angle: PlayAreaAngle) => {
-    const updateValue = inputValue < minAreaLength ? minAreaLength : inputValue;
+    const updateValue = Helpers.NumberLimiter(inputValue, minAreaLength, maxAreaLength);
 
     if (angle === PlayAreaAngle.X) {
       props.onPlayAreaChange({ xLength: updateValue, yLength: props.gameSetup.playArea.yLength })
@@ -33,12 +35,14 @@ function StartNewGame (props: startNewGameProps) {
             <input type="number"
                     className='col-5'
                     min={minAreaLength}
+                    max={maxAreaLength}
                     value={props.gameSetup.playArea.xLength}
                     onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.X)} />
             <span className='col-2 text-center'>X</span>
             <input type="number"
                     className='col-5'
                     min={minAreaLength}
+                    max={maxAreaLength}
                     value={props.gameSetup.playArea.yLength}
                     onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.Y)} />
           </div>
@@ -52,4 +56,4 @@ function StartNewGame (props: startNewGameProps) {
   );
 }
 
-export default StartNewGame;
+export default NewGameSetup;

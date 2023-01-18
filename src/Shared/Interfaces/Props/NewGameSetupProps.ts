@@ -1,7 +1,7 @@
 import { PlayArea } from "../playArea";
 import { GameSetup } from "../gameSetup";
 
-export interface startNewGameProps {
+export interface NewGameSetupProps {
   gameSetup: GameSetup;
   onPlayerNameChange: setPlayerNameFunc;
   onPlayAreaChange: setPlayAreaFunc;

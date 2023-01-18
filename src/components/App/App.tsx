@@ -1,7 +1,7 @@
 import React from 'react';
 import { PlayArea } from '../../Shared/Interfaces/playArea';
 import { AppState } from '../../Shared/Interfaces/State/appState';
-import StartNewGame from '../StartNewGame/StartNewGame';
+import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
 
 class App extends React.Component <{}, AppState> {
@@ -44,7 +44,7 @@ class App extends React.Component <{}, AppState> {
           <h1>Lights Out!</h1>
         </header>
 
-        <StartNewGame gameSetup={this.state.gameSetup}
+        <NewGameSetup gameSetup={this.state.gameSetup}
                       onPlayerNameChange={this.setPlayerName}
                       onPlayAreaChange={this.setPlayArea} />
       </div>
