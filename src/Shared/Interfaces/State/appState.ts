@@ -1,7 +1,8 @@
-import { GamePhase } from "../../Enum/gamePhase";
-import { GameSetup } from "../gameSetup";
+import { Phase } from "../../Enum/gamePhase";
+import { Setup } from "../gameSetup";
 
 export interface AppState {
-  gameSetup: GameSetup;
-  gamePhase: GamePhase;
+  setup: Setup;
+  phase: Phase;
+  grid: boolean[][];
 }

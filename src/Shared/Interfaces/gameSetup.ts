@@ -1,6 +1,6 @@
 import { PlayArea } from "./playArea";
 
-export interface GameSetup {
+export interface Setup {
   playerName: string;
   playArea: PlayArea;
 }

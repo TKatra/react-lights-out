@@ -1,7 +1,6 @@
-import { GamePhase } from '../../Shared/Enum/gamePhase';
 import { PlayAreaAngle } from '../../Shared/Enum/playAreaAngles';
 import { Helpers } from '../../Shared/helpers';
-import { NewGameSetupProps } from '../../Shared/Interfaces/Props/NewGameSetupProps';
+import { NewGameSetupProps } from '../../Shared/Interfaces/Props/newGameSetupProps';
 import styles from './NewGameSetup.module.scss';
 
 function NewGameSetup (props: NewGameSetupProps) {
@@ -12,15 +11,15 @@ function NewGameSetup (props: NewGameSetupProps) {
     const updateValue = Helpers.NumberLimiter(inputValue, minAreaLength, maxAreaLength);
 
     if (angle === PlayAreaAngle.X) {
-      props.onPlayAreaChange({ xLength: updateValue, yLength: props.gameSetup.playArea.yLength })
+      props.onPlayAreaChange({ xLength: updateValue, yLength: props.setup.playArea.yLength })
     }
     else {
-      props.onPlayAreaChange({ xLength: props.gameSetup.playArea.xLength, yLength: updateValue })
+      props.onPlayAreaChange({ xLength: props.setup.playArea.xLength, yLength: updateValue })
     }
   }
 
   const isSetupValid = (): boolean => {
-    if (props.gameSetup.playerName === '') return false;
+    if (props.setup.playerName === '') return false;
 
     return true;
   }
@@ -34,7 +33,7 @@ function NewGameSetup (props: NewGameSetupProps) {
           <label className='d-block mt-3'>Player Name</label>
           <input type="text"
                   className='col-12'
-                  value={props.gameSetup.playerName}
+                  value={props.setup.playerName}
                   onChange={(e) => props.onPlayerNameChange(e.target.value)} />
 
           <label className='d-block mt-3'>Play Area Size</label>
@@ -43,20 +42,20 @@ function NewGameSetup (props: NewGameSetupProps) {
                     className='col-5'
                     min={minAreaLength}
                     max={maxAreaLength}
-                    value={props.gameSetup.playArea.xLength}
+                    value={props.setup.playArea.xLength}
                     onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.X)} />
             <span className='col-2 text-center'>X</span>
             <input type="number"
                     className='col-5'
                     min={minAreaLength}
                     max={maxAreaLength}
-                    value={props.gameSetup.playArea.yLength}
+                    value={props.setup.playArea.yLength}
                     onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.Y)} />
           </div>
           <div className='d-flex justify-content-end'>
             <button className='btn btn-primary mt-3'
                     disabled={!isSetupValid()}
-                    onClick={() => props.onStartNewGame(GamePhase.Play)}>
+                    onClick={() => props.onStartNewGame()}>
               Start Game!
             </button>
           </div>

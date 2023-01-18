@@ -1,4 +1,4 @@
-export enum GamePhase {
+export enum Phase {
   Setup,
   Play,
   GameOver

@@ -1,7 +1,9 @@
 import React from 'react';
-import { GamePhase } from '../../Shared/Enum/gamePhase';
+import { Phase } from '../../Shared/Enum/gamePhase';
+import { Helpers } from '../../Shared/helpers';
 import { PlayArea } from '../../Shared/Interfaces/playArea';
 import { AppState } from '../../Shared/Interfaces/State/appState';
+import GamePlay from '../GamePlay/GamePlay';
 import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
 
@@ -10,21 +12,22 @@ class App extends React.Component <{}, AppState> {
     super(props);
 
     this.state = {
-      gameSetup: {
+      setup: {
         playerName: '',
         playArea: {
           xLength: 5,
           yLength: 5
         }
       },
-      gamePhase: GamePhase.Setup
+      phase: Phase.Setup,
+      grid: []
     };
   }
 
   setPlayerName = (newName: string) => {
     this.setState({
-      gameSetup: {
-        ...this.state.gameSetup,
+      setup: {
+        ...this.state.setup,
         playerName: newName
       }
     });
@@ -32,17 +35,30 @@ class App extends React.Component <{}, AppState> {
 
   setPlayArea = (newPlayArea: PlayArea) => {
     this.setState({
-      gameSetup: {
-        ...this.state.gameSetup,
+      setup: {
+        ...this.state.setup,
         playArea: newPlayArea
       }
     });
   }
 
-  setGamePhase = (newGamePhase: GamePhase) => {
+  setGamePhase = (newGamePhase: Phase) => {
     this.setState({
-      gamePhase: newGamePhase
+      phase: newGamePhase
     });
+  }
+
+  setGrid = (newGrid: boolean[][]) => {
+    this.setState({
+      grid: newGrid
+    })
+  }
+
+  startGame = () => {
+    const newGrid = Helpers.CreateGrid(this.state.setup.playArea.xLength, this.state.setup.playArea.yLength);
+
+    this.setGrid(newGrid);
+    this.setGamePhase(Phase.Play);
   }
 
   render() {
@@ -51,20 +67,20 @@ class App extends React.Component <{}, AppState> {
         <header className="App-header">
           <h1>Lights Out!</h1>
         </header>
-        { this.state.gamePhase === GamePhase.Setup ?
-          <NewGameSetup gameSetup={this.state.gameSetup}
+        { this.state.phase === Phase.Setup ?
+          <NewGameSetup setup={this.state.setup}
                       onPlayerNameChange={this.setPlayerName}
                       onPlayAreaChange={this.setPlayArea}
-                      onStartNewGame={this.setGamePhase} />
+                      onStartNewGame={this.startGame} />
           : null
         }
 
-        { this.state.gamePhase === GamePhase.Play ?
-          <h2>Put Game here</h2>
+        { this.state.phase === Phase.Play ?
+          <GamePlay setup={this.state.setup} grid={this.state.grid} />
           : null
         }
 
-        { this.state.gamePhase === GamePhase.GameOver ?
+        { this.state.phase === Phase.GameOver ?
           <h2>Put Game Over screen here</h2>
           : null
         }

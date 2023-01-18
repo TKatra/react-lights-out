@@ -8,4 +8,19 @@ export class Helpers {
 
     return number;
   }
+
+  public static CreateGrid = (xLength: number, yLength: number): boolean[][] => {
+    const grid = [];
+
+    for(let i = 0; i < yLength; i++) {
+      const gridRow = [];
+
+      for(let k = 0; k < xLength; k++) {
+        gridRow.push(false);
+      }
+
+      grid.push(gridRow);
+    }
+    return grid;
+  }
 }

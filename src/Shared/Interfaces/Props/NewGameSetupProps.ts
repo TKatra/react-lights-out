@@ -1,12 +1,11 @@
 import { PlayArea } from "../playArea";
-import { GameSetup } from "../gameSetup";
-import { GamePhase } from "../../Enum/gamePhase";
+import { Setup } from "../gameSetup";
 
 export interface NewGameSetupProps {
-  gameSetup: GameSetup;
+  setup: Setup;
   onPlayerNameChange: setPlayerNameFunc;
   onPlayAreaChange: setPlayAreaFunc;
-  onStartNewGame: setGamePhaseFunc;
+  onStartNewGame: startGameFunc;
 }
 
 interface setPlayerNameFunc {
@@ -17,6 +16,6 @@ interface setPlayAreaFunc {
   (newPlayArea: PlayArea): void;
 }
 
-interface setGamePhaseFunc {
-  (newGamePhase: GamePhase): void;
+interface startGameFunc {
+  (): void;
 }
