@@ -1,14 +1,14 @@
 import { PlayAreaAngle } from '../../Shared/Enum/playAreaAngles';
-import { Helpers } from '../../Shared/helpers';
+import { MiscHelper } from '../../Shared/miscHelper';
 import { NewGameSetupProps } from '../../Shared/Interfaces/Props/newGameSetupProps';
 import styles from './NewGameSetup.module.scss';
 
 function NewGameSetup (props: NewGameSetupProps) {
   const minAreaLength = 3;
-  const maxAreaLength = 50;
+  const maxAreaLength = 10;
 
   const onPlayAreaChange = (inputValue: number, angle: PlayAreaAngle): void => {
-    const updateValue = Helpers.NumberLimiter(inputValue, minAreaLength, maxAreaLength);
+    const updateValue = MiscHelper.NumberLimiter(inputValue, minAreaLength, maxAreaLength);
 
     if (angle === PlayAreaAngle.X) {
       props.onPlayAreaChange({ xLength: updateValue, yLength: props.setup.playArea.yLength })

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Phase } from '../../Shared/Enum/gamePhase';
-import { Helpers } from '../../Shared/helpers';
 import { PlayArea } from '../../Shared/Interfaces/playArea';
 import { AppState } from '../../Shared/Interfaces/State/appState';
 import GamePlay from '../GamePlay/GamePlay';
 import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
+import { GridHelper } from '../../Shared/Interfaces/gridHelper';
 
 class App extends React.Component <{}, AppState> {
   constructor(props: any) {
@@ -20,7 +20,9 @@ class App extends React.Component <{}, AppState> {
         }
       },
       phase: Phase.Setup,
-      grid: []
+      initialGrid: [],
+      activeGrid: [],
+      isGridValid: false
     };
   }
 
@@ -48,17 +50,35 @@ class App extends React.Component <{}, AppState> {
     });
   }
 
-  setGrid = (newGrid: boolean[][]) => {
+  setInitialGrid = (newGrid: boolean[][]) => {
     this.setState({
-      grid: newGrid
+      initialGrid: newGrid
+    })
+  }
+
+  setActiveGrid = (newGrid: boolean[][]) => {
+    this.setState({
+      activeGrid: newGrid
+    })
+  }
+
+  setIsGridValid = (isValid: boolean) => {
+    this.setState({
+      isGridValid: isValid
     })
   }
 
   startGame = () => {
-    const newGrid = Helpers.CreateGrid(this.state.setup.playArea.xLength, this.state.setup.playArea.yLength);
+    const newGrid = GridHelper.CreateGrid(this.state.setup.playArea.xLength, this.state.setup.playArea.yLength);
 
-    this.setGrid(newGrid);
+    this.setInitialGrid(newGrid);
+    this.setActiveGrid(newGrid);
     this.setGamePhase(Phase.Play);
+  }
+
+  updateGrid = (newGrid: boolean[][]) => {
+    this.setActiveGrid(newGrid);
+    this.setIsGridValid(GridHelper.isGridLightValid(newGrid));
   }
 
   render() {
@@ -76,7 +96,10 @@ class App extends React.Component <{}, AppState> {
         }
 
         { this.state.phase === Phase.Play ?
-          <GamePlay setup={this.state.setup} grid={this.state.grid} />
+          <GamePlay setup={this.state.setup}
+                    grid={this.state.activeGrid}
+                    isGridValid={this.state.isGridValid}
+                    onGridClick={this.updateGrid} />
           : null
         }
 
