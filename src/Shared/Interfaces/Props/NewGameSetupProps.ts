@@ -5,7 +5,6 @@ export interface NewGameSetupProps {
   setup: Setup;
   onPlayerNameChange: setPlayerNameFunc;
   onPlayAreaChange: setPlayAreaFunc;
-  onStartNewGame: startGameFunc;
 }
 
 interface setPlayerNameFunc {
@@ -14,8 +13,4 @@ interface setPlayerNameFunc {
 
 interface setPlayAreaFunc {
   (newPlayArea: PlayArea): void;
-}
-
-interface startGameFunc {
-  (): void;
 }

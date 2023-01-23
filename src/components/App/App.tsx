@@ -6,6 +6,7 @@ import GamePlay from '../GamePlay/GamePlay';
 import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
 import { GridHelper } from '../../Shared/Interfaces/gridHelper';
+import Modal from '../Modal/Modal';
 
 class App extends React.Component <{}, AppState> {
   constructor(props: any) {
@@ -15,9 +16,10 @@ class App extends React.Component <{}, AppState> {
       setup: {
         playerName: '',
         playArea: {
-          xLength: 5,
-          yLength: 5
-        }
+          xLength: 3,
+          yLength: 3
+        },
+        isValid: false
       },
       phase: Phase.Setup,
       initialGrid: [],
@@ -26,20 +28,20 @@ class App extends React.Component <{}, AppState> {
     };
   }
 
-  setPlayerName = (newName: string) => {
-    this.setState({
-      setup: {
-        ...this.state.setup,
-        playerName: newName
-      }
-    });
-  }
-
   setPlayArea = (newPlayArea: PlayArea) => {
     this.setState({
       setup: {
         ...this.state.setup,
         playArea: newPlayArea
+      }
+    });
+  }
+
+  setSetupIsValid = (isValid: boolean) => {
+    this.setState({
+      setup: {
+        ...this.state.setup,
+        isValid: isValid
       }
     });
   }
@@ -68,11 +70,30 @@ class App extends React.Component <{}, AppState> {
     })
   }
 
+  setPlayerName = (newName : string) => {
+    this.setState({
+      setup: {
+        ...this.state.setup,
+        playerName: newName
+      }
+    }, () => this.validateSetup());
+  }
+
+  validateSetup = () => {
+    if (this.state.setup.playerName === '') {
+      this.setSetupIsValid(false);
+      return;
+    }
+
+    this.setSetupIsValid(true);
+  }
+
   startGame = () => {
     const newGrid = GridHelper.CreateGrid(this.state.setup.playArea.xLength, this.state.setup.playArea.yLength);
 
     this.setInitialGrid(newGrid);
     this.setActiveGrid(newGrid);
+    this.setIsGridValid(false);
     this.setGamePhase(Phase.Play);
   }
 
@@ -87,15 +108,8 @@ class App extends React.Component <{}, AppState> {
         <header className="App-header">
           <h1>Lights Out!</h1>
         </header>
-        { this.state.phase === Phase.Setup ?
-          <NewGameSetup setup={this.state.setup}
-                      onPlayerNameChange={this.setPlayerName}
-                      onPlayAreaChange={this.setPlayArea}
-                      onStartNewGame={this.startGame} />
-          : null
-        }
 
-        { this.state.phase === Phase.Play ?
+        { this.state.activeGrid.length ?
           <GamePlay setup={this.state.setup}
                     grid={this.state.activeGrid}
                     isGridValid={this.state.isGridValid}
@@ -103,10 +117,25 @@ class App extends React.Component <{}, AppState> {
           : null
         }
 
-        { this.state.phase === Phase.GameOver ?
-          <h2>Put Game Over screen here</h2>
-          : null
-        }
+        <Modal title='New Game'
+                show={this.state.phase === Phase.Setup}
+                closable={false}
+                confirmBtnText='Start Game!'
+                disableConfirmBtn={!this.state.setup.isValid}
+                onConfirm={this.startGame}>
+          <NewGameSetup setup={this.state.setup}
+                        onPlayerNameChange={this.setPlayerName}
+                        onPlayAreaChange={this.setPlayArea} />
+        </Modal>
+
+        <Modal title='Congratulations!'
+                show={this.state.isGridValid && this.state.phase !== Phase.Setup}
+                description='You won the, press the button to start a new game again.'
+                closable={false}
+                confirmBtnText='Start New Game!'
+                onConfirm={() => this.setGamePhase(Phase.Setup)}>
+
+        </Modal>
       </div>
     );
   }

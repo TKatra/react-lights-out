@@ -13,23 +13,17 @@ function GamePlay (props: GamePlayProps) {
   }
 
   return (
-    <>
-      {props.isGridValid ?
-        <h2 className='text-center'>Congratulations, you won!</h2>
-        : null
-      }
-      <div className={`${styles.PlayArea} mt-5`}>
-        {props.grid.map((y, yIndex) => {
-          return <div className='d-flex justify-content-center noselect' key={yIndex}> {
-            y.map((x, xIndex) => {
-              return <div className={`${styles.Square} ${ x ? styles.active : '' } m-1`}
-                            onClick={() => onGridClick({x: xIndex, y: yIndex})}
-                            key={xIndex}>
-                </div>
-          })}</div>
-        })}
-      </div>
-    </>
+    <div className={`${styles.PlayArea} mt-5`}>
+      {props.grid.map((y, yIndex) => {
+        return <div className='d-flex justify-content-center noselect' key={yIndex}> {
+          y.map((x, xIndex) => {
+            return <div className={`${styles.Square} ${ x ? styles.active : '' } m-1`}
+                        onClick={() => onGridClick({x: xIndex, y: yIndex})}
+                        key={xIndex}>
+            </div>
+        })}</div>
+      })}
+    </div>
   );
 }
 
