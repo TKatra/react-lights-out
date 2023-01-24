@@ -7,6 +7,7 @@ import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
 import { GridHelper } from '../../Shared/Interfaces/gridHelper';
 import Modal from '../Modal/Modal';
+import { MiscHelper } from '../../Shared/miscHelper';
 
 class App extends React.Component <{}, AppState> {
   constructor(props: any) {
@@ -28,6 +29,16 @@ class App extends React.Component <{}, AppState> {
     };
   }
 
+  setPlayerName = (newName : string) => {
+    this.setState({
+      setup: {
+        ...this.state.setup,
+        playerName: newName,
+        isValid: MiscHelper.validateSetup(this.state.setup)
+      }
+    });
+  }
+
   setPlayArea = (newPlayArea: PlayArea) => {
     this.setState({
       setup: {
@@ -37,69 +48,39 @@ class App extends React.Component <{}, AppState> {
     });
   }
 
-  setSetupIsValid = (isValid: boolean) => {
-    this.setState({
-      setup: {
-        ...this.state.setup,
-        isValid: isValid
-      }
-    });
-  }
-
-  setGamePhase = (newGamePhase: Phase) => {
-    this.setState({
-      phase: newGamePhase
-    });
-  }
-
-  setInitialGrid = (newGrid: boolean[][]) => {
-    this.setState({
-      initialGrid: newGrid
-    })
-  }
-
-  setActiveGrid = (newGrid: boolean[][]) => {
-    this.setState({
-      activeGrid: newGrid
-    })
-  }
-
-  setIsGridValid = (isValid: boolean) => {
-    this.setState({
-      isGridValid: isValid
-    })
-  }
-
-  setPlayerName = (newName : string) => {
-    this.setState({
-      setup: {
-        ...this.state.setup,
-        playerName: newName
-      }
-    }, () => this.validateSetup());
-  }
-
-  validateSetup = () => {
-    if (this.state.setup.playerName === '') {
-      this.setSetupIsValid(false);
-      return;
-    }
-
-    this.setSetupIsValid(true);
-  }
-
   startGame = () => {
     const newGrid = GridHelper.CreateGrid(this.state.setup.playArea.xLength, this.state.setup.playArea.yLength);
 
-    this.setInitialGrid(newGrid);
-    this.setActiveGrid(newGrid);
-    this.setIsGridValid(false);
-    this.setGamePhase(Phase.Play);
+    this.setState({
+      initialGrid: GridHelper.deepCopyGrid(newGrid),
+      activeGrid: GridHelper.deepCopyGrid(newGrid),
+      isGridValid: false,
+      phase: Phase.Play
+    });
   }
 
   updateGrid = (newGrid: boolean[][]) => {
-    this.setActiveGrid(newGrid);
-    this.setIsGridValid(GridHelper.isGridLightValid(newGrid));
+    const isGridValid = GridHelper.isGridLightValid(newGrid);
+
+    this.setState({
+      activeGrid: newGrid,
+      isGridValid: isGridValid,
+      phase: isGridValid ? Phase.GameOver : Phase.Play
+    });
+  }
+
+  startNewGameSetup = () => {
+    this.setState({
+      phase: Phase.Setup
+    });
+  }
+
+  restartGameWithLatestGrid = () => {
+    this.setState({
+      activeGrid: GridHelper.deepCopyGrid(this.state.initialGrid),
+      isGridValid: false,
+      phase: Phase.Play
+    });
   }
 
   render() {
@@ -120,21 +101,22 @@ class App extends React.Component <{}, AppState> {
         <Modal title='New Game'
                 show={this.state.phase === Phase.Setup}
                 closable={false}
-                confirmBtnText='Start Game!'
-                disableConfirmBtn={!this.state.setup.isValid}
-                onConfirm={this.startGame}>
+                primaryBtnText='Start Game!'
+                disablePrimaryBtn={!this.state.setup.isValid}
+                onPrimaryBtnClick={this.startGame}>
           <NewGameSetup setup={this.state.setup}
                         onPlayerNameChange={this.setPlayerName}
                         onPlayAreaChange={this.setPlayArea} />
         </Modal>
 
         <Modal title='Congratulations!'
-                show={this.state.isGridValid && this.state.phase !== Phase.Setup}
-                description='You won the, press the button to start a new game again.'
+                show={this.state.phase === Phase.GameOver}
+                description='You won, press the button to start a new game again.'
                 closable={false}
-                confirmBtnText='Start New Game!'
-                onConfirm={() => this.setGamePhase(Phase.Setup)}>
-
+                primaryBtnText='Start New Game!'
+                onPrimaryBtnClick={() => this.startNewGameSetup()}
+                secondaryBtnText='Reset same game'
+                onSecondaryBtnClick={() => this.restartGameWithLatestGrid()}>
         </Modal>
       </div>
     );

@@ -46,6 +46,10 @@ export class GridHelper {
     return isValid;
   }
 
+  public static deepCopyGrid = (grid: boolean[][]): boolean[][] => {
+    return JSON.parse(JSON.stringify(grid))
+  }
+
   private static getRandomBoolian(): boolean {
     return Math.floor(Math.random() * 2) === 1;
   }

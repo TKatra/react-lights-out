@@ -4,7 +4,6 @@ import { GamePlayProps } from '../../Shared/Interfaces/Props/gamePlayProps';
 import styles from './GamePlay.module.scss';
 
 function GamePlay (props: GamePlayProps) {
-
   const onGridClick = (coordinate: Coordinate) => {
     if (!props.isGridValid) {
       const newGrid = GridHelper.setGridLights(props.grid, coordinate);

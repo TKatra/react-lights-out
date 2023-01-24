@@ -14,17 +14,25 @@ function Modal (props: ModalProps) {
       {props.children}
 
       <div className='d-flex justify-content-end mt-4'>
-        { props.onConfirm ?
-          <button className='btn btn-primary'
-                  disabled={props.disableConfirmBtn}
-                  onClick={() => props.onConfirm?.()}>
-            {props.confirmBtnText}
+        { props.onPrimaryBtnClick ?
+          <button className='btn btn-primary ms-3'
+                  disabled={props.disablePrimaryBtn}
+                  onClick={() => props.onPrimaryBtnClick?.()}>
+            {props.primaryBtnText}
+          </button>
+          : null
+        }
+        { props.onSecondaryBtnClick ?
+          <button className='btn btn-secondary ms-3'
+                  disabled={props.disableSecondaryBtn}
+                  onClick={() => props.onSecondaryBtnClick?.()}>
+            {props.secondaryBtnText}
           </button>
           : null
         }
         { props.onClose && props.closable ?
-          <button className='btn btn-secondary'
-                  onClick={() => props.onConfirm?.()}>
+          <button className='btn btn-secondary ms-3'
+                  onClick={() => props.onClose?.()}>
             {props.closeBtnText}
           </button>
           : null

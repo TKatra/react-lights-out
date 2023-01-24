@@ -3,16 +3,23 @@ export interface ModalProps {
   show: boolean;
   closable: boolean;
   description?: string;
-  disableConfirmBtn?: boolean;
-  confirmBtnText?: string;
-  closeBtnText?: string;
   children?: React.ReactNode;
+  disablePrimaryBtn?: boolean;
+  primaryBtnText?: string;
+  disableSecondaryBtn?: boolean;
+  secondaryBtnText?: string;
+  closeBtnText?: string;
 
-  onConfirm?: onConfirmFunc;
+  onPrimaryBtnClick?: onPrimaryBtnClickFunc;
+  onSecondaryBtnClick?: onSecondaryBtnClickFunc;
   onClose?: onCloseFunc;
 }
 
-interface onConfirmFunc {
+interface onPrimaryBtnClickFunc {
+  (...args: any[]): void
+}
+
+interface onSecondaryBtnClickFunc {
   (...args: any[]): void
 }
 

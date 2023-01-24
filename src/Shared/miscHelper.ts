@@ -1,3 +1,5 @@
+import { Setup } from "./Interfaces/gameSetup";
+
 export class MiscHelper {
   public static NumberLimiter = (number: number, minValue: number, maxValue: number): number => {
     // Fix for when number is NaN
@@ -7,5 +9,13 @@ export class MiscHelper {
     if (number > maxValue) return maxValue;
 
     return number;
+  }
+
+  public static validateSetup = (setup: Setup) => {
+    if (setup.playerName === '') {
+      return false;
+    }
+
+    return true;
   }
 }
