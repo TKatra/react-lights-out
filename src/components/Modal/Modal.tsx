@@ -3,7 +3,7 @@ import styles from './Modal.module.scss';
 
 function Modal (props: ModalProps) {
   return (
-    <div className={`${styles.Modal} ${props.show ? styles.show : ''}`} >
+    <div className={`${styles.Modal} ${props.show ? styles.show : ''} col-11 col-sm-6 col-md-4`} >
       <h2>{props.title}</h2>
 
       { props.description ?
