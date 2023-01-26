@@ -1,0 +1,42 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 80px;
+  width: 100%;
+  font-size: 30px;
+  background-color: #282c34;
+  color: white;
+  text-align: center;
+
+  h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.timer {
+  z-index: -100;
+  position: fixed;
+  left: 50%;
+  top: auto;
+  font-size: 20px;
+  background-color: #fff;
+  color: #000;
+  border-bottom: 1px solid #282c34;
+  border-left: 1px solid #282c34;
+  border-right: 1px solid #282c34;
+  border-radius: 0 0 15px 15px;
+  box-shadow: 0 0 0 0 #333;
+
+  transform: translate(-50%, -100%);
+  transition: transform .5s, box-shadow .5s;
+
+  &.show {
+    transform: translate(-50%, 0);
+    box-shadow: 0 1px 5px 1px #333;
+    box-shadow: 0 0px 5px 2px #333
+  }
+}

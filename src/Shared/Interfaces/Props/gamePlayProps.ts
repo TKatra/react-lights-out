@@ -1,3 +1,4 @@
+import { Coordinate } from "../coordinate";
 import { Setup } from "../gameSetup";
 
 export interface GamePlayProps {
@@ -8,5 +9,5 @@ export interface GamePlayProps {
 }
 
 interface setActiveGridFunc {
-  (newGrid: boolean[][]): void;
+  (newGrid: Coordinate): void;
 }

@@ -8,6 +8,8 @@ import './App.scss';
 import { GridHelper } from '../../Shared/Interfaces/gridHelper';
 import Modal from '../Modal/Modal';
 import { MiscHelper } from '../../Shared/miscHelper';
+import Header from '../Header/Header';
+import { Coordinate } from '../../Shared/Interfaces/coordinate';
 
 class App extends React.Component <{}, AppState> {
   constructor(props: any) {
@@ -22,10 +24,15 @@ class App extends React.Component <{}, AppState> {
         },
         isValid: false
       },
+      statistics: {
+        timeSpent: false,
+        turnList: []
+      },
       phase: Phase.Setup,
       initialGrid: [],
       activeGrid: [],
-      isGridValid: false
+      isGridValid: false,
+      showtimer: false,
     };
   }
 
@@ -52,51 +59,68 @@ class App extends React.Component <{}, AppState> {
     const newGrid = GridHelper.CreateGrid(this.state.setup.playArea.xLength, this.state.setup.playArea.yLength);
 
     this.setState({
-      initialGrid: GridHelper.deepCopyGrid(newGrid),
-      activeGrid: GridHelper.deepCopyGrid(newGrid),
+      initialGrid: MiscHelper.deepCopy(newGrid),
+      activeGrid: MiscHelper.deepCopy(newGrid),
       isGridValid: false,
-      phase: Phase.Play
+      phase: Phase.Play,
+      showtimer: true,
+      statistics: {
+        timeSpent: false,
+        turnList: []
+      },
     });
   }
 
-  updateGrid = (newGrid: boolean[][]) => {
+  updateGrid = (coordinate: Coordinate) => {
+    const newGrid = GridHelper.setGridLights(this.state.activeGrid, coordinate);
     const isGridValid = GridHelper.isGridLightValid(newGrid);
+    const newTurnList = MiscHelper.deepCopy(this.state.statistics.turnList) as Coordinate[];
+    newTurnList.push(coordinate);
 
     this.setState({
       activeGrid: newGrid,
       isGridValid: isGridValid,
-      phase: isGridValid ? Phase.GameOver : Phase.Play
+      phase: isGridValid ? Phase.GameOver : Phase.Play,
+      statistics: {
+        ...this.state.statistics,
+        turnList: newTurnList
+      }
     });
   }
 
   startNewGameSetup = () => {
     this.setState({
-      phase: Phase.Setup
+      phase: Phase.Setup,
+      showtimer: false
     });
   }
 
   restartGameWithLatestGrid = () => {
     this.setState({
-      activeGrid: GridHelper.deepCopyGrid(this.state.initialGrid),
+      activeGrid: MiscHelper.deepCopy(this.state.initialGrid),
       isGridValid: false,
-      phase: Phase.Play
+      phase: Phase.Play,
+      statistics: {
+        timeSpent: false,
+        turnList: []
+      },
     });
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1>Lights Out!</h1>
-        </header>
+        <Header showTimer={this.state.showtimer} />
+        <div className='main-content pt-5 px-3'>
 
-        { this.state.activeGrid.length ?
-          <GamePlay setup={this.state.setup}
-                    grid={this.state.activeGrid}
-                    isGridValid={this.state.isGridValid}
-                    onGridClick={this.updateGrid} />
-          : null
-        }
+          { this.state.activeGrid.length ?
+            <GamePlay setup={this.state.setup}
+                      grid={this.state.activeGrid}
+                      isGridValid={this.state.isGridValid}
+                      onGridClick={this.updateGrid} />
+            : null
+          }
+        </div>
 
         <Modal title='New Game'
                 show={this.state.phase === Phase.Setup}

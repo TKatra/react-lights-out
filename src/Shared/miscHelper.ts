@@ -18,4 +18,8 @@ export class MiscHelper {
 
     return true;
   }
+
+  public static deepCopy = (objectToCopy: any) => {
+    return JSON.parse(JSON.stringify(objectToCopy))
+  }
 }
