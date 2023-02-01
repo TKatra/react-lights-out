@@ -1,4 +1,4 @@
-import { Coordinate } from "./coordinate";
+import { Coordinate } from "./Interfaces/coordinate";
 
 export class GridHelper {
   public static CreateGrid = (xLength: number, yLength: number): boolean[][] => {

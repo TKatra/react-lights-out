@@ -1,6 +1,7 @@
 import { Phase } from "../../Enum/gamePhase";
+import { Coordinate } from "../coordinate";
 import { Setup } from "../gameSetup";
-import { Statistics } from "../statistics";
+import { Timer } from "../timer";
 
 export interface AppState {
   setup: Setup;
@@ -8,6 +9,6 @@ export interface AppState {
   initialGrid: boolean[][];
   activeGrid: boolean[][];
   isGridValid: boolean;
-  showtimer: boolean;
-  statistics: Statistics;
+  timer: Timer;
+  moveList: Coordinate[];
 }

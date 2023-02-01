@@ -22,4 +22,16 @@ export class MiscHelper {
   public static deepCopy = (objectToCopy: any) => {
     return JSON.parse(JSON.stringify(objectToCopy))
   }
+
+  public static timerToString = (start: number, end: number, showMilliseconds?: boolean): string => {
+    const timer = this.removeDateTimezoneOffset(new Date(end - start));
+    const hours = timer.getHours() ? timer.getHours() + ':' : '';
+    const milliseconds = showMilliseconds ? ':' + timer.getMilliseconds() : '';
+
+    return `${hours}${timer.getMinutes()}:${timer.getSeconds()}${milliseconds}`;
+  }
+
+  public static removeDateTimezoneOffset = (date: Date): Date => {
+    return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  }
 }

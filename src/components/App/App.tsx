@@ -5,7 +5,7 @@ import { AppState } from '../../Shared/Interfaces/State/appState';
 import GamePlay from '../GamePlay/GamePlay';
 import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
-import { GridHelper } from '../../Shared/Interfaces/gridHelper';
+import { GridHelper } from '../../Shared/gridHelper';
 import Modal from '../Modal/Modal';
 import { MiscHelper } from '../../Shared/miscHelper';
 import Header from '../Header/Header';
@@ -24,15 +24,17 @@ class App extends React.Component <{}, AppState> {
         },
         isValid: false
       },
-      statistics: {
-        timeSpent: false,
-        turnList: []
-      },
       phase: Phase.Setup,
       initialGrid: [],
       activeGrid: [],
       isGridValid: false,
-      showtimer: false,
+      timer: {
+        active: false,
+        show: false,
+        start: 0,
+        end: 0
+      },
+      moveList: []
     };
   }
 
@@ -63,36 +65,10 @@ class App extends React.Component <{}, AppState> {
       activeGrid: MiscHelper.deepCopy(newGrid),
       isGridValid: false,
       phase: Phase.Play,
-      showtimer: true,
-      statistics: {
-        timeSpent: false,
-        turnList: []
-      },
+      moveList: []
     });
-  }
 
-  updateGrid = (coordinate: Coordinate) => {
-    const newGrid = GridHelper.setGridLights(this.state.activeGrid, coordinate);
-    const isGridValid = GridHelper.isGridLightValid(newGrid);
-    const newTurnList = MiscHelper.deepCopy(this.state.statistics.turnList) as Coordinate[];
-    newTurnList.push(coordinate);
-
-    this.setState({
-      activeGrid: newGrid,
-      isGridValid: isGridValid,
-      phase: isGridValid ? Phase.GameOver : Phase.Play,
-      statistics: {
-        ...this.state.statistics,
-        turnList: newTurnList
-      }
-    });
-  }
-
-  startNewGameSetup = () => {
-    this.setState({
-      phase: Phase.Setup,
-      showtimer: false
-    });
+    this.startTimer();
   }
 
   restartGameWithLatestGrid = () => {
@@ -100,17 +76,89 @@ class App extends React.Component <{}, AppState> {
       activeGrid: MiscHelper.deepCopy(this.state.initialGrid),
       isGridValid: false,
       phase: Phase.Play,
-      statistics: {
-        timeSpent: false,
-        turnList: []
-      },
+      moveList: []
+    });
+
+    this.startTimer();
+  }
+
+  updateGrid = (coordinate: Coordinate) => {
+    const newGrid = GridHelper.setGridLights(this.state.activeGrid, coordinate);
+    const isGridValid = GridHelper.isGridLightValid(newGrid);
+
+    if (isGridValid) {
+      clearInterval(this.state.timer.id);
+    }
+
+    const newTurnList = MiscHelper.deepCopy(this.state.moveList) as Coordinate[];
+    newTurnList.push(coordinate);
+
+    this.setState({
+      activeGrid: newGrid,
+      isGridValid: isGridValid,
+      phase: isGridValid ? Phase.GameOver : Phase.Play,
+      moveList: newTurnList
+    });
+  }
+
+  startNewGameSetup = () => {
+    this.setState({
+      phase: Phase.Setup,
+      timer: {
+        ...this.state.timer,
+        show: false
+      }
+    });
+  }
+
+  startTimer = () => {
+    const startTime = Date.now();
+
+    this.setState({
+      timer: {
+        show: true,
+        active: true,
+        start: startTime,
+        end: startTime
+      }
+    }, () => {
+      const timerId = setInterval(() => {
+        if (this.state.timer.active) {
+          this.setState({
+            timer: {
+              ...this.state.timer,
+              end: Date.now()
+            }
+          });
+        }
+      }, 1000);
+
+      this.setState({
+        timer: {
+          ...this.state.timer,
+          id: timerId
+        }
+      });
+    });
+  }
+
+  stopTimer = () => {
+    const endTime = Date.now();
+    clearInterval(this.state.timer.id);
+
+    this.setState({
+      timer: {
+        ...this.state.timer,
+        active: false,
+        end: endTime
+      }
     });
   }
 
   render() {
     return (
       <div className="App">
-        <Header showTimer={this.state.showtimer} />
+        <Header timer={this.state.timer} />
         <div className='main-content pt-5 px-3'>
 
           { this.state.activeGrid.length ?
@@ -135,7 +183,7 @@ class App extends React.Component <{}, AppState> {
 
         <Modal title='Congratulations!'
                 show={this.state.phase === Phase.GameOver}
-                description='You won, press the button to start a new game again.'
+                description={`You won, press the button to start a new game again. Your time was: ${MiscHelper.timerToString(this.state.timer.start, this.state.timer.end, true)} in ${this.state.moveList.length} moves.`}
                 closable={false}
                 primaryBtnText='Start New Game!'
                 onPrimaryBtnClick={() => this.startNewGameSetup()}

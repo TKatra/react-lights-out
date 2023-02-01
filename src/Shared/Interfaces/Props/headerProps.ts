@@ -1,3 +1,5 @@
+import { Timer } from "../timer";
+
 export interface HeaderProps {
-  showTimer: boolean
+  timer: Timer;
 }
