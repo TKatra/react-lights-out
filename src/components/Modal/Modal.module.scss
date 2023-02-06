@@ -12,11 +12,13 @@
   transition: opacity .3s, top .3s, box-shadow .3s;
 
   pointer-events: none;
+  visibility: hidden;
 
   &.show {
     top: 50%;
     opacity: 100;
     box-shadow: 5px 5px 15px #333;
     pointer-events: auto;
+    visibility: visible;
   }
 }
