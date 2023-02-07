@@ -10,6 +10,7 @@ import Modal from '../Modal/Modal';
 import { MiscHelper } from '../../Shared/miscHelper';
 import Header from '../Header/Header';
 import { Coordinate } from '../../Shared/Interfaces/coordinate';
+import GameOver from '../GameOver/GameOver';
 
 class App extends React.Component <{}, AppState> {
   constructor(props: any) {
@@ -168,6 +169,11 @@ class App extends React.Component <{}, AppState> {
                       onGridClick={this.updateGrid} />
             : null
           }
+          <GameOver show={this.state.phase === Phase.GameOver}
+                    timer={this.state.timer}
+                    moveList={this.state.moveList}
+                    onStartNewGame={() => this.startNewGameSetup()}
+                    onResetGame={() => this.restartGameWithLatestGrid()} />
         </div>
 
         <Modal title='New Game'
@@ -179,16 +185,6 @@ class App extends React.Component <{}, AppState> {
           <NewGameSetup setup={this.state.setup}
                         onPlayerNameChange={this.setPlayerName}
                         onPlayAreaChange={this.setPlayArea} />
-        </Modal>
-
-        <Modal title='Congratulations!'
-                show={this.state.phase === Phase.GameOver}
-                description={`You won, press the button to start a new game again. Your time was: ${MiscHelper.timerToString(this.state.timer.start, this.state.timer.end, true)} in ${this.state.moveList.length} moves.`}
-                closable={false}
-                primaryBtnText='Start New Game!'
-                onPrimaryBtnClick={() => this.startNewGameSetup()}
-                secondaryBtnText='Reset same game'
-                onSecondaryBtnClick={() => this.restartGameWithLatestGrid()}>
         </Modal>
       </div>
     );

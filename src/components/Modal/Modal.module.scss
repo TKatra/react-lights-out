@@ -7,16 +7,15 @@
   border: 1px solid #000;
   opacity: 0;
   box-shadow: 0 0 0 0 #333;
-
-  transform: translate(-50%, -50%);
-  transition: opacity .3s, top .3s, box-shadow .3s;
-
   pointer-events: none;
   visibility: hidden;
+  transform: translate(-50%, -50%);
+
+  transition: opacity .3s, top .3s, box-shadow .3s, visibility .3s;
 
   &.show {
     top: 50%;
-    opacity: 100;
+    opacity: 1;
     box-shadow: 5px 5px 15px #333;
     pointer-events: auto;
     visibility: visible;
