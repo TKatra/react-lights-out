@@ -1,6 +1,6 @@
 import { PlayAreaAngle } from '../../Shared/Enum/playAreaAngles';
 import { MiscHelper } from '../../Shared/miscHelper';
-import { NewGameSetupProps } from '../../Shared/Interfaces/Props/newGameSetupProps';
+import { NewGameSetupProps } from '../../Shared/Interfaces/Props/NewGameSetupProps';
 import styles from './NewGameSetup.module.scss';
 
 function NewGameSetup (props: NewGameSetupProps) {
