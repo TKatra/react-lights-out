@@ -1,4 +1,4 @@
-import { Setup } from "./Interfaces/gameSetup";
+import { SetupState } from "./Interfaces/State/setupState";
 
 export class MiscHelper {
   public static NumberLimiter = (number: number, minValue: number, maxValue: number): number => {
@@ -11,7 +11,7 @@ export class MiscHelper {
     return number;
   }
 
-  public static validateSetup = (setup: Setup) => {
+  public static validateSetup = (setup: SetupState) => {
     if (setup.playerName === '') {
       return false;
     }

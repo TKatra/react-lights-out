@@ -1,5 +1,5 @@
-import { Timer } from "../timer";
+import { TimerState } from "../State/timerState";
 
 export interface HeaderProps {
-  timer: Timer;
+  timer: TimerState;
 }

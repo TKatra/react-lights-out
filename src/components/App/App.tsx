@@ -1,7 +1,6 @@
-import React from 'react';
+import { useReducer, useState } from 'react';
 import { Phase } from '../../Shared/Enum/gamePhase';
 import { PlayArea } from '../../Shared/Interfaces/playArea';
-import { AppState } from '../../Shared/Interfaces/State/appState';
 import GamePlay from '../GamePlay/GamePlay';
 import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
@@ -11,184 +10,120 @@ import { MiscHelper } from '../../Shared/miscHelper';
 import Header from '../Header/Header';
 import { Coordinate } from '../../Shared/Interfaces/coordinate';
 import GameOver from '../GameOver/GameOver';
+import { initialSetupState, setupReducer } from '../../Reducers/setupReducer';
+import { SetupActionType } from '../../Shared/Enum/Actions/SetupActionType';
+import { gridReducer, initialGridState } from '../../Reducers/gridReducer';
+import { GridActionType } from '../../Shared/Enum/Actions/GridActionType';
+import { initialTimerState, timerReducer } from '../../Reducers/timerReducer';
+import { TimerActionType } from '../../Shared/Enum/Actions/TimerActionType';
 
-class App extends React.Component <{}, AppState> {
-  constructor(props: any) {
-    super(props);
+function App () {
+  const [phase, setPhase] = useState<Phase>(Phase.Setup)
+  const [setupState, setupDispatch] = useReducer(setupReducer, initialSetupState);
+  const [gridState, gridDispatch] = useReducer(gridReducer, initialGridState);
+  const [timerState, timerDispatch] = useReducer(timerReducer, initialTimerState);
 
-    this.state = {
-      setup: {
-        playerName: '',
-        playArea: {
-          xLength: 3,
-          yLength: 3
-        },
-        isValid: false
-      },
-      phase: Phase.Setup,
-      initialGrid: [],
-      activeGrid: [],
-      isGridValid: false,
-      timer: {
-        active: false,
-        show: false,
-        start: 0,
-        end: 0
-      },
-      moveList: []
-    };
+  const setPlayerName = (newName : string) => {
+    setupDispatch({ type: SetupActionType.SetPlayerName, payload: newName });
   }
 
-  setPlayerName = (newName : string) => {
-    this.setState({
-      setup: {
-        ...this.state.setup,
-        playerName: newName,
-        isValid: MiscHelper.validateSetup(this.state.setup)
-      }
-    });
+  const setPlayArea = (newPlayArea: PlayArea) => {
+    setupDispatch({ type: SetupActionType.SetPlayArea, payload: newPlayArea });
   }
 
-  setPlayArea = (newPlayArea: PlayArea) => {
-    this.setState({
-      setup: {
-        ...this.state.setup,
-        playArea: newPlayArea
-      }
-    });
+  const startGame = () => {
+    const newGrid = GridHelper.CreateGrid(setupState.playArea.xLength, setupState.playArea.yLength);
+
+    gridDispatch({ type: GridActionType.StartNewGrid, payload: newGrid });
+    setPhase(Phase.Play);
+    startTimer();
   }
 
-  startGame = () => {
-    const newGrid = GridHelper.CreateGrid(this.state.setup.playArea.xLength, this.state.setup.playArea.yLength);
-
-    this.setState({
-      initialGrid: MiscHelper.deepCopy(newGrid),
-      activeGrid: MiscHelper.deepCopy(newGrid),
-      isGridValid: false,
-      phase: Phase.Play,
-      moveList: []
-    });
-
-    this.startTimer();
+  const restartGameWithLatestGrid = () => {
+    gridDispatch({ type: GridActionType.ResetGrid });
+    setPhase(Phase.Play);
+    startTimer();
   }
 
-  restartGameWithLatestGrid = () => {
-    this.setState({
-      activeGrid: MiscHelper.deepCopy(this.state.initialGrid),
-      isGridValid: false,
-      phase: Phase.Play,
-      moveList: []
-    });
-
-    this.startTimer();
-  }
-
-  updateGrid = (coordinate: Coordinate) => {
-    const newGrid = GridHelper.setGridLights(this.state.activeGrid, coordinate);
+  const updateGrid = (coordinate: Coordinate) => {
+    const newGrid = GridHelper.setGridLights(gridState.activeGrid, coordinate);
     const isGridValid = GridHelper.isGridLightValid(newGrid);
 
     if (isGridValid) {
-      clearInterval(this.state.timer.id);
+      stopTimer();
     }
 
-    const newTurnList = MiscHelper.deepCopy(this.state.moveList) as Coordinate[];
-    newTurnList.push(coordinate);
+    const newMoveList = MiscHelper.deepCopy(gridState.moveList) as Coordinate[];
+    newMoveList.push(coordinate);
 
-    this.setState({
-      activeGrid: newGrid,
-      isGridValid: isGridValid,
-      phase: isGridValid ? Phase.GameOver : Phase.Play,
-      moveList: newTurnList
-    });
+    gridDispatch({
+      type: GridActionType.UpdateGrid,
+      payload: {
+        newGrid: newGrid,
+        isGridValid: isGridValid,
+        newMoveList: newMoveList
+    }});
+
+    setPhase(isGridValid ? Phase.GameOver : Phase.Play);
   }
 
-  startNewGameSetup = () => {
-    this.setState({
-      phase: Phase.Setup,
-      timer: {
-        ...this.state.timer,
-        show: false
-      }
-    });
+  const startNewGameSetup = () => {
+    timerDispatch({type: TimerActionType.HideTimer});
+    setPhase(Phase.Setup);
   }
 
-  startTimer = () => {
+  const startTimer = () => {
     const startTime = Date.now();
 
-    this.setState({
-      timer: {
-        show: true,
-        active: true,
-        start: startTime,
-        end: startTime
-      }
-    }, () => {
-      const timerId = setInterval(() => {
-        if (this.state.timer.active) {
-          this.setState({
-            timer: {
-              ...this.state.timer,
-              end: Date.now()
-            }
-          });
-        }
-      }, 1000);
+    timerDispatch({type: TimerActionType.StartTimer, payload: startTime});
 
-      this.setState({
-        timer: {
-          ...this.state.timer,
-          id: timerId
-        }
-      });
-    });
+    const timerId = setInterval(() => {
+      if (timerState.active) {
+        timerDispatch({type: TimerActionType.UpdateTimer, payload: Date.now()});
+      }
+    }, 1000);
+
+    timerDispatch({type: TimerActionType.SetTimerId, payload: timerId});
   }
 
-  stopTimer = () => {
+  const stopTimer = () => {
     const endTime = Date.now();
-    clearInterval(this.state.timer.id);
 
-    this.setState({
-      timer: {
-        ...this.state.timer,
-        active: false,
-        end: endTime
-      }
-    });
+    clearInterval(timerState.id);
+    timerDispatch({type: TimerActionType.StopTimer, payload: endTime});
   }
 
-  render() {
-    return (
-      <div className="App">
-        <Header timer={this.state.timer} />
-        <div className='main-content pt-5 px-3'>
+  return (
+    <div className="App">
+      <Header timer={timerState} />
+      <div className='main-content pt-5 px-3'>
 
-          { this.state.activeGrid.length ?
-            <GamePlay setup={this.state.setup}
-                      grid={this.state.activeGrid}
-                      isGridValid={this.state.isGridValid}
-                      onGridClick={this.updateGrid} />
-            : null
-          }
-          <GameOver show={this.state.phase === Phase.GameOver}
-                    timer={this.state.timer}
-                    moveList={this.state.moveList}
-                    onStartNewGame={() => this.startNewGameSetup()}
-                    onResetGame={() => this.restartGameWithLatestGrid()} />
-        </div>
-
-        <Modal title='New Game'
-                show={this.state.phase === Phase.Setup}
-                closable={false}
-                primaryBtnText='Start Game!'
-                disablePrimaryBtn={!this.state.setup.isValid}
-                onPrimaryBtnClick={this.startGame}>
-          <NewGameSetup setup={this.state.setup}
-                        onPlayerNameChange={this.setPlayerName}
-                        onPlayAreaChange={this.setPlayArea} />
-        </Modal>
+        { gridState.activeGrid.length ?
+          <GamePlay setup={setupState}
+                    grid={gridState.activeGrid}
+                    isGridValid={gridState.isGridValid}
+                    onGridClick={updateGrid} />
+          : null
+        }
+        <GameOver show={phase === Phase.GameOver}
+                  timer={timerState}
+                  moveList={gridState.moveList}
+                  onStartNewGame={() => startNewGameSetup()}
+                  onResetGame={() => restartGameWithLatestGrid()} />
       </div>
-    );
-  }
+
+      <Modal title='New Game'
+              show={phase === Phase.Setup}
+              closable={false}
+              primaryBtnText='Start Game!'
+              disablePrimaryBtn={!setupState.isValid}
+              onPrimaryBtnClick={startGame}>
+        <NewGameSetup setup={setupState}
+                      onPlayerNameChange={setPlayerName}
+                      onPlayAreaChange={setPlayArea} />
+      </Modal>
+    </div>
+  );
 }
 
 export default App;

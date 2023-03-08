@@ -1,4 +1,4 @@
-export interface Timer {
+export interface TimerState {
   show: boolean;
   active: boolean;
   start: number;

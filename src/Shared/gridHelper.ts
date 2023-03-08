@@ -1,7 +1,8 @@
 import { Coordinate } from "./Interfaces/coordinate";
+import { Grid } from "./Types/grid";
 
 export class GridHelper {
-  public static CreateGrid = (xLength: number, yLength: number): boolean[][] => {
+  public static CreateGrid = (xLength: number, yLength: number): Grid => {
     const grid = [];
 
     for(let i = 0; i < yLength; i++) {
@@ -16,7 +17,7 @@ export class GridHelper {
     return grid;
   }
 
-  public static setGridLights = (grid: boolean[][], coord: Coordinate): boolean[][]  => {
+  public static setGridLights = (grid: Grid, coord: Coordinate): Grid  => {
     const gridToReturn = grid;
 
     // Center
@@ -41,7 +42,7 @@ export class GridHelper {
     return gridToReturn;
   }
 
-  public static isGridLightValid = (grid: boolean[][]): boolean => {
+  public static isGridLightValid = (grid: Grid): boolean => {
     const isValid = !grid.some(y => y.some(x => !x));
     return isValid;
   }

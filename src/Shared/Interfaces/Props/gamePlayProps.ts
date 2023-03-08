@@ -1,9 +1,10 @@
+import { Grid } from "../../Types/grid";
 import { Coordinate } from "../coordinate";
-import { Setup } from "../gameSetup";
+import { SetupState } from "../State/setupState";
 
 export interface GamePlayProps {
-  setup: Setup;
-  grid: boolean[][];
+  setup: SetupState;
+  grid: Grid;
   isGridValid: boolean;
   onGridClick: setActiveGridFunc;
 }

@@ -1,9 +1,9 @@
 import { Coordinate } from "../coordinate";
-import { Timer } from "../timer";
+import { TimerState } from "../State/timerState";
 
 export interface GameOverProps {
   show: boolean;
-  timer: Timer;
+  timer: TimerState;
   moveList: Coordinate[];
   onStartNewGame: onStartNewGameFunc;
   onResetGame: onResetGameFunc;
