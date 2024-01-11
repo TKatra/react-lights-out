@@ -12,7 +12,7 @@ function GamePlay (props: GamePlayProps) {
   return (
     <div className={`${styles.PlayArea} mt-3`}>
       {props.grid.map((y, yIndex) => {
-        return <div className='d-flex justify-content-center noselect' key={yIndex}> {
+        return <div className='d-flex justify-content-center noselect' key={`${yIndex}`}> {
           y.map((x, xIndex) => {
             return <div className={`${styles.Square} ${ x ? styles.active : '' } m-1`}
                         onClick={() => onGridClick({x: xIndex, y: yIndex})}

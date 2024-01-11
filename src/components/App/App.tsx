@@ -16,6 +16,7 @@ import { gridReducer, initialGridState } from '../../Reducers/gridReducer';
 import { GridActionType } from '../../Shared/Enum/Actions/GridActionType';
 import { initialTimerState, timerReducer } from '../../Reducers/timerReducer';
 import { TimerActionType } from '../../Shared/Enum/Actions/TimerActionType';
+import { useInterval } from '../../Custom Hooks/useInterval';
 
 function App () {
   const [phase, setPhase] = useState<Phase>(Phase.Setup)
@@ -74,36 +75,28 @@ function App () {
 
   const startTimer = () => {
     const startTime = Date.now();
-
     timerDispatch({type: TimerActionType.StartTimer, payload: startTime});
-
-    const timerId = setInterval(() => {
-      if (timerState.active) {
-        timerDispatch({type: TimerActionType.UpdateTimer, payload: Date.now()});
-      }
-    }, 1000);
-
-    timerDispatch({type: TimerActionType.SetTimerId, payload: timerId});
   }
 
   const stopTimer = () => {
     const endTime = Date.now();
-
-    clearInterval(timerState.id);
     timerDispatch({type: TimerActionType.StopTimer, payload: endTime});
   }
+
+  useInterval(() => {
+    timerDispatch({type: TimerActionType.UpdateTimer, payload: Date.now()});
+  }, timerState.active ? 1000 : null);
 
   return (
     <div className="App">
       <Header timer={timerState} />
       <div className='main-content pt-5 px-3'>
 
-        { gridState.activeGrid.length ?
+        { gridState.activeGrid.length &&
           <GamePlay setup={setupState}
                     grid={gridState.activeGrid}
                     isGridValid={gridState.isGridValid}
                     onGridClick={updateGrid} />
-          : null
         }
         <GameOver show={phase === Phase.GameOver}
                   timer={timerState}
