@@ -12,17 +12,21 @@ import { Coordinate } from '../../Shared/Interfaces/coordinate';
 import GameOver from '../GameOver/GameOver';
 import { initialSetupState, setupReducer } from '../../Reducers/setupReducer';
 import { SetupActionType } from '../../Shared/Enum/Actions/SetupActionType';
-import { gridReducer, initialGridState } from '../../Reducers/gridReducer';
-import { GridActionType } from '../../Shared/Enum/Actions/GridActionType';
 import { initialTimerState, timerReducer } from '../../Reducers/timerReducer';
 import { TimerActionType } from '../../Shared/Enum/Actions/TimerActionType';
 import { useInterval } from '../../Custom Hooks/useInterval';
+import { useAppDispatch, useAppSelector } from '../../Custom Hooks/stateHooks';
+import { resetGrid, selectActiveGrid, selectIsGridValid, selectMoveList, startNewGrid, updateGrid } from '../../Reducers/gridSlice';
 
 function App () {
   const [phase, setPhase] = useState<Phase>(Phase.Setup)
   const [setupState, setupDispatch] = useReducer(setupReducer, initialSetupState);
-  const [gridState, gridDispatch] = useReducer(gridReducer, initialGridState);
   const [timerState, timerDispatch] = useReducer(timerReducer, initialTimerState);
+
+  const dispatch = useAppDispatch();
+  const activeGrid = useAppSelector(selectActiveGrid);
+  const isGridValid = useAppSelector(selectIsGridValid);
+  const moveList = useAppSelector(selectMoveList);
 
   const setPlayerName = (newName : string) => {
     setupDispatch({ type: SetupActionType.SetPlayerName, payload: newName });
@@ -35,37 +39,36 @@ function App () {
   const startGame = () => {
     const newGrid = GridHelper.CreateGrid(setupState.playArea.xLength, setupState.playArea.yLength);
 
-    gridDispatch({ type: GridActionType.StartNewGrid, payload: newGrid });
+    dispatch(startNewGrid(newGrid));
+
     setPhase(Phase.Play);
     startTimer();
   }
 
   const restartGameWithLatestGrid = () => {
-    gridDispatch({ type: GridActionType.ResetGrid });
+    dispatch(resetGrid());
     setPhase(Phase.Play);
     startTimer();
   }
 
-  const updateGrid = (coordinate: Coordinate) => {
-    const newGrid = GridHelper.setGridLights(gridState.activeGrid, coordinate);
-    const isGridValid = GridHelper.isGridLightValid(newGrid);
+  const onUpdateGrid = (coordinate: Coordinate) => {
+    const newGrid = GridHelper.setGridLights(MiscHelper.deepCopy(activeGrid), coordinate);
+    const gridValid = GridHelper.isGridLightValid(newGrid);
 
-    if (isGridValid) {
+    if (gridValid) {
       stopTimer();
     }
 
-    const newMoveList = MiscHelper.deepCopy(gridState.moveList) as Coordinate[];
+    const newMoveList = MiscHelper.deepCopy(moveList) as Coordinate[];
     newMoveList.push(coordinate);
 
-    gridDispatch({
-      type: GridActionType.UpdateGrid,
-      payload: {
-        newGrid: newGrid,
-        isGridValid: isGridValid,
-        newMoveList: newMoveList
-    }});
+    dispatch(updateGrid({
+      newGrid: newGrid,
+      isGridValid: gridValid,
+      newMoveList: newMoveList
+    }));
 
-    setPhase(isGridValid ? Phase.GameOver : Phase.Play);
+    setPhase(gridValid ? Phase.GameOver : Phase.Play);
   }
 
   const startNewGameSetup = () => {
@@ -92,15 +95,15 @@ function App () {
       <Header timer={timerState} />
       <div className='main-content pt-5 px-3'>
 
-        { gridState.activeGrid.length &&
+        { activeGrid.length &&
           <GamePlay setup={setupState}
-                    grid={gridState.activeGrid}
-                    isGridValid={gridState.isGridValid}
-                    onGridClick={updateGrid} />
+                    grid={activeGrid}
+                    isGridValid={isGridValid}
+                    onGridClick={onUpdateGrid} />
         }
         <GameOver show={phase === Phase.GameOver}
                   timer={timerState}
-                  moveList={gridState.moveList}
+                  moveList={moveList}
                   onStartNewGame={() => startNewGameSetup()}
                   onResetGame={() => restartGameWithLatestGrid()} />
       </div>
