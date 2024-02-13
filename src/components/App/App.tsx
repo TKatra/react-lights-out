@@ -12,9 +12,9 @@ import { Coordinate } from '../../Shared/Interfaces/coordinate';
 import GameOver from '../GameOver/GameOver';
 import { useInterval } from '../../Custom Hooks/useInterval';
 import { useAppDispatch, useAppSelector } from '../../Custom Hooks/stateHooks';
-import { resetGrid, selectActiveGrid, selectIsGridValid, selectMoveList, startNewGrid, updateGrid } from '../../Reducers/gridSlice';
-import { selectIsSetupValid, selectPlayArea, selectPlayerName, setPlayArea, setPlayerName } from '../../Reducers/setupSlice';
-import { hideTimer, selectIsTimerActive, selectIsTimerShown, selectTimerString, selectTimerStringIncludeMs, startTimer, stopTimer, updateTimer } from '../../Reducers/timerSlice';
+import { resetGrid, selectActiveGrid, selectIsGridValid, selectMoveList, startNewGrid, updateGrid } from '../../Slices/gridSlice';
+import { selectIsSetupValid, selectPlayArea, selectPlayerName, setPlayArea, setPlayerName } from '../../Slices/setupSlice';
+import { hideTimer, selectIsTimerActive, selectIsTimerShown, selectTimerString, selectTimerStringIncludeMs, startTimer, stopTimer, updateTimer } from '../../Slices/timerSlice';
 
 function App () {
   const [phase, setPhase] = useState<Phase>(Phase.Setup)
