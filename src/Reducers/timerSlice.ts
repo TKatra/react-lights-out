@@ -1,44 +1,48 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Coordinate } from "../Shared/Interfaces/coordinate";
-import { GridState } from "../Shared/Interfaces/State/gridState";
+import { TimerState } from "../Shared/Interfaces/State/timerState";
 import { MiscHelper } from "../Shared/miscHelper";
-import { Grid } from "../Shared/Types/grid";
 
-const initialState: GridState = {  
-  initialGrid: [],
-  activeGrid: [],
-  isGridValid: false,
-  moveList: []
+const initialState: TimerState = {  
+  active: false,
+  show: false,
+  start: 0,
+  end: 0,
+  id: undefined
 };
 
-export const gridSlice = createSlice({
-  name: 'grid',
+export const timerSlice = createSlice({
+  name: 'timer',
   initialState,
   reducers : {
-    startNewGrid: (state, action: PayloadAction<Grid>) => {
-      state.initialGrid = MiscHelper.deepCopy(action.payload);
-      state.activeGrid = MiscHelper.deepCopy(action.payload);
-      state.isGridValid = false;
-      state.moveList = [];
+    setTimerId: (state, action: PayloadAction<NodeJS.Timer>) => {
+      state.id = action.payload;
     },
-    resetGrid: (state) => {
-      state.activeGrid = MiscHelper.deepCopy(state.initialGrid);
-      state.isGridValid = false;
-      state.moveList = [];
+    startTimer: (state, action: PayloadAction<number>) => {
+      state.show = true;
+      state.active = true;
+      state.start = action.payload;
+      state.end = action.payload;
     },
-    updateGrid: (state, action: PayloadAction<{newGrid: Grid, isGridValid: boolean, newMoveList: Coordinate[]}>) => {
-      state.activeGrid = action.payload.newGrid;
-      state.isGridValid = action.payload.isGridValid;
-      state.moveList = action.payload.newMoveList;
+    updateTimer: (state, action: PayloadAction<number>) => {
+      state.end = action.payload;
+    },
+    stopTimer: (state, action: PayloadAction<number>) => {
+      state.active = false;
+      state.end = action.payload;
+    },
+    hideTimer: (state) => {
+      state.active = false;
+      state.show = false;
     }
   },
   selectors: {
-    selectActiveGrid: grid => grid.activeGrid,
-    selectIsGridValid: grid => grid.isGridValid,
-    selectMoveList: grid => grid.moveList
+    selectTimerString: timer => MiscHelper.timerToString(timer.start, timer.end),
+    selectTimerStringIncludeMs: timer => MiscHelper.timerToString(timer.start, timer.end, true),
+    selectIsTimerActive: timer => timer.active,
+    selectIsTimerShown: timer => timer.show
   }
 });
 
-export const { startNewGrid, resetGrid, updateGrid } = gridSlice.actions;
-export const { selectIsGridValid, selectMoveList, selectActiveGrid } = gridSlice.selectors
-export default gridSlice.reducer;
+export const { setTimerId, startTimer, updateTimer, stopTimer, hideTimer } = timerSlice.actions;
+export const { selectTimerString, selectTimerStringIncludeMs, selectIsTimerActive, selectIsTimerShown } = timerSlice.selectors
+export default timerSlice.reducer;

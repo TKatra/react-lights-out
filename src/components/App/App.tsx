@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useState } from 'react';
 import { Phase } from '../../Shared/Enum/gamePhase';
 import { PlayArea } from '../../Shared/Interfaces/playArea';
 import GamePlay from '../GamePlay/GamePlay';
@@ -10,16 +10,14 @@ import { MiscHelper } from '../../Shared/miscHelper';
 import Header from '../Header/Header';
 import { Coordinate } from '../../Shared/Interfaces/coordinate';
 import GameOver from '../GameOver/GameOver';
-import { initialTimerState, timerReducer } from '../../Reducers/timerReducer';
-import { TimerActionType } from '../../Shared/Enum/Actions/TimerActionType';
 import { useInterval } from '../../Custom Hooks/useInterval';
 import { useAppDispatch, useAppSelector } from '../../Custom Hooks/stateHooks';
 import { resetGrid, selectActiveGrid, selectIsGridValid, selectMoveList, startNewGrid, updateGrid } from '../../Reducers/gridSlice';
 import { selectIsSetupValid, selectPlayArea, selectPlayerName, setPlayArea, setPlayerName } from '../../Reducers/setupSlice';
+import { hideTimer, selectIsTimerActive, selectIsTimerShown, selectTimerString, selectTimerStringIncludeMs, startTimer, stopTimer, updateTimer } from '../../Reducers/timerSlice';
 
 function App () {
   const [phase, setPhase] = useState<Phase>(Phase.Setup)
-  const [timerState, timerDispatch] = useReducer(timerReducer, initialTimerState);
 
   const dispatch = useAppDispatch();
 
@@ -30,6 +28,11 @@ function App () {
   const activeGrid = useAppSelector(selectActiveGrid);
   const isGridValid = useAppSelector(selectIsGridValid);
   const moveList = useAppSelector(selectMoveList);
+
+  const timerString = useAppSelector(selectTimerString);
+  const timerStringIncludingMs = useAppSelector(selectTimerStringIncludeMs);
+  const isTimerActive = useAppSelector(selectIsTimerActive);
+  const isTimerShown = useAppSelector(selectIsTimerShown);
 
   const onSetPlayerName = (newName : string) => {
     dispatch(setPlayerName(newName));
@@ -45,13 +48,13 @@ function App () {
     dispatch(startNewGrid(newGrid));
 
     setPhase(Phase.Play);
-    startTimer();
+    onStartTimer();
   }
 
   const restartGameWithLatestGrid = () => {
     dispatch(resetGrid());
     setPhase(Phase.Play);
-    startTimer();
+    onStartTimer();
   }
 
   const onUpdateGrid = (coordinate: Coordinate) => {
@@ -59,7 +62,7 @@ function App () {
     const gridValid = GridHelper.isGridLightValid(newGrid);
 
     if (gridValid) {
-      stopTimer();
+      onStopTimer();
     }
 
     const newMoveList = MiscHelper.deepCopy(moveList) as Coordinate[];
@@ -75,27 +78,28 @@ function App () {
   }
 
   const startNewGameSetup = () => {
-    timerDispatch({type: TimerActionType.HideTimer});
+    dispatch(hideTimer());
     setPhase(Phase.Setup);
   }
 
-  const startTimer = () => {
+  const onStartTimer = () => {
     const startTime = Date.now();
-    timerDispatch({type: TimerActionType.StartTimer, payload: startTime});
+    dispatch(startTimer(startTime));
   }
 
-  const stopTimer = () => {
+  const onStopTimer = () => {
     const endTime = Date.now();
-    timerDispatch({type: TimerActionType.StopTimer, payload: endTime});
+    dispatch(stopTimer(endTime));
   }
 
   useInterval(() => {
-    timerDispatch({type: TimerActionType.UpdateTimer, payload: Date.now()});
-  }, timerState.active ? 1000 : null);
+    dispatch(updateTimer(Date.now()));
+  }, isTimerActive ? 1000 : null);
 
   return (
     <div className="App">
-      <Header timer={timerState} />
+      <Header timerString={timerString}
+              isTimerShown={isTimerShown} />
       <div className='main-content pt-5 px-3'>
 
         { activeGrid.length &&
@@ -104,7 +108,7 @@ function App () {
                     onGridClick={onUpdateGrid} />
         }
         <GameOver show={phase === Phase.GameOver}
-                  timer={timerState}
+                  timerStringMs={timerStringIncludingMs}
                   moveList={moveList}
                   onStartNewGame={() => startNewGameSetup()}
                   onResetGame={() => restartGameWithLatestGrid()} />

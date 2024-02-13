@@ -1,5 +1,4 @@
 import { GameOverProps } from '../../Shared/Interfaces/Props/gameOverProps';
-import { MiscHelper } from '../../Shared/miscHelper';
 import styles from './GameOver.module.scss';
 
 function GameOver (props: GameOverProps) {
@@ -8,7 +7,7 @@ function GameOver (props: GameOverProps) {
       <div className='row text-center'>
         <h2>Congratulations!</h2>
         <p>
-          {`You won, press the button to start a new game again. Your time was: ${MiscHelper.timerToString(props.timer.start, props.timer.end, true)} in ${props.moveList.length} moves.`}
+          {`You won, press the button to start a new game again. Your time was: ${props.timerStringMs} in ${props.moveList.length} moves.`}
         </p>
       </div>
 
