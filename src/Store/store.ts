@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 // import { gridReducer } from '../Reducers/gridReducer';
 import gridReducer from '../Reducers/gridSlice';
+import setupReducer from '../Reducers/setupSlice';
 // import { gridReducer } from '../Reducers/gridReducer';
 // import { setupReducer } from '../Reducers/setupReducer';
 // import { timerReducer } from '../Reducers/timerReducer';
@@ -8,7 +9,7 @@ import gridReducer from '../Reducers/gridSlice';
 export const store = configureStore({
   reducer: {
     grid: gridReducer,
-    // setup: setupReducer,
+    setup: setupReducer,
     // timer: timerReducer
   }
 });

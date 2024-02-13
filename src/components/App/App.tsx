@@ -10,34 +10,37 @@ import { MiscHelper } from '../../Shared/miscHelper';
 import Header from '../Header/Header';
 import { Coordinate } from '../../Shared/Interfaces/coordinate';
 import GameOver from '../GameOver/GameOver';
-import { initialSetupState, setupReducer } from '../../Reducers/setupReducer';
-import { SetupActionType } from '../../Shared/Enum/Actions/SetupActionType';
 import { initialTimerState, timerReducer } from '../../Reducers/timerReducer';
 import { TimerActionType } from '../../Shared/Enum/Actions/TimerActionType';
 import { useInterval } from '../../Custom Hooks/useInterval';
 import { useAppDispatch, useAppSelector } from '../../Custom Hooks/stateHooks';
 import { resetGrid, selectActiveGrid, selectIsGridValid, selectMoveList, startNewGrid, updateGrid } from '../../Reducers/gridSlice';
+import { selectIsSetupValid, selectPlayArea, selectPlayerName, setPlayArea, setPlayerName } from '../../Reducers/setupSlice';
 
 function App () {
   const [phase, setPhase] = useState<Phase>(Phase.Setup)
-  const [setupState, setupDispatch] = useReducer(setupReducer, initialSetupState);
   const [timerState, timerDispatch] = useReducer(timerReducer, initialTimerState);
 
   const dispatch = useAppDispatch();
+
+  const playerName = useAppSelector(selectPlayerName);
+  const playArea = useAppSelector(selectPlayArea);
+  const isSetupValid = useAppSelector(selectIsSetupValid);
+
   const activeGrid = useAppSelector(selectActiveGrid);
   const isGridValid = useAppSelector(selectIsGridValid);
   const moveList = useAppSelector(selectMoveList);
 
-  const setPlayerName = (newName : string) => {
-    setupDispatch({ type: SetupActionType.SetPlayerName, payload: newName });
+  const onSetPlayerName = (newName : string) => {
+    dispatch(setPlayerName(newName));
   }
 
-  const setPlayArea = (newPlayArea: PlayArea) => {
-    setupDispatch({ type: SetupActionType.SetPlayArea, payload: newPlayArea });
+  const onSetPlayArea = (newPlayArea: PlayArea) => {
+    dispatch(setPlayArea(newPlayArea));
   }
 
   const startGame = () => {
-    const newGrid = GridHelper.CreateGrid(setupState.playArea.xLength, setupState.playArea.yLength);
+    const newGrid = GridHelper.CreateGrid(playArea.xLength, playArea.yLength);
 
     dispatch(startNewGrid(newGrid));
 
@@ -96,8 +99,7 @@ function App () {
       <div className='main-content pt-5 px-3'>
 
         { activeGrid.length &&
-          <GamePlay setup={setupState}
-                    grid={activeGrid}
+          <GamePlay grid={activeGrid}
                     isGridValid={isGridValid}
                     onGridClick={onUpdateGrid} />
         }
@@ -112,11 +114,12 @@ function App () {
               show={phase === Phase.Setup}
               closable={false}
               primaryBtnText='Start Game!'
-              disablePrimaryBtn={!setupState.isValid}
+              disablePrimaryBtn={!isSetupValid}
               onPrimaryBtnClick={startGame}>
-        <NewGameSetup setup={setupState}
-                      onPlayerNameChange={setPlayerName}
-                      onPlayAreaChange={setPlayArea} />
+        <NewGameSetup playerName={playerName}
+                      playArea={playArea}
+                      onPlayerNameChange={onSetPlayerName}
+                      onPlayAreaChange={onSetPlayArea} />
       </Modal>
     </div>
   );

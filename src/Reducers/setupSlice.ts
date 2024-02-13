@@ -1,44 +1,36 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Coordinate } from "../Shared/Interfaces/coordinate";
-import { GridState } from "../Shared/Interfaces/State/gridState";
+import { PlayArea } from "../Shared/Interfaces/playArea";
+import { SetupState } from "../Shared/Interfaces/State/setupState";
 import { MiscHelper } from "../Shared/miscHelper";
-import { Grid } from "../Shared/Types/grid";
 
-const initialState: GridState = {  
-  initialGrid: [],
-  activeGrid: [],
-  isGridValid: false,
-  moveList: []
+const initialState: SetupState = {  
+  playerName: '',
+  playArea: {
+    xLength: 3,
+    yLength: 3
+  },
+  isValid: false
 };
 
-export const gridSlice = createSlice({
-  name: 'grid',
+export const setupSlice = createSlice({
+  name: 'setup',
   initialState,
   reducers : {
-    startNewGrid: (state, action: PayloadAction<Grid>) => {
-      state.initialGrid = MiscHelper.deepCopy(action.payload);
-      state.activeGrid = MiscHelper.deepCopy(action.payload);
-      state.isGridValid = false;
-      state.moveList = [];
+    setPlayerName: (state, action: PayloadAction<string>) => {
+      state.playerName = action.payload;
+      state.isValid = MiscHelper.validateSetup(state);
     },
-    resetGrid: (state) => {
-      state.activeGrid = MiscHelper.deepCopy(state.initialGrid);
-      state.isGridValid = false;
-      state.moveList = [];
-    },
-    updateGrid: (state, action: PayloadAction<{newGrid: Grid, isGridValid: boolean, newMoveList: Coordinate[]}>) => {
-      state.activeGrid = action.payload.newGrid;
-      state.isGridValid = action.payload.isGridValid;
-      state.moveList = action.payload.newMoveList;
+    setPlayArea: (state, action: PayloadAction<PlayArea>) => {
+      state.playArea = action.payload;
     }
   },
   selectors: {
-    selectActiveGrid: grid => grid.activeGrid,
-    selectIsGridValid: grid => grid.isGridValid,
-    selectMoveList: grid => grid.moveList
+    selectPlayerName: setup => setup.playerName,
+    selectPlayArea: setup => setup.playArea,
+    selectIsSetupValid: setup => setup.isValid
   }
 });
 
-export const { startNewGrid, resetGrid, updateGrid } = gridSlice.actions;
-export const { selectIsGridValid, selectMoveList, selectActiveGrid } = gridSlice.selectors
-export default gridSlice.reducer;
+export const { setPlayerName, setPlayArea } = setupSlice.actions;
+export const { selectPlayerName, selectPlayArea, selectIsSetupValid } = setupSlice.selectors
+export default setupSlice.reducer;
