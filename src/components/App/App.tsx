@@ -102,7 +102,7 @@ function App () {
               isTimerShown={isTimerShown} />
       <div className='main-content pt-5 px-3'>
 
-        { activeGrid.length &&
+        { !!activeGrid.length &&
           <GamePlay grid={activeGrid}
                     isGridValid={isGridValid}
                     onGridClick={onUpdateGrid} />
