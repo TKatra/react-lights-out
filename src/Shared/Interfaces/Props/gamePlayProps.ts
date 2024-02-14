@@ -3,7 +3,6 @@ import { Coordinate } from "../coordinate";
 import { SetupState } from "../State/setupState";
 
 export interface GamePlayProps {
-  setup: SetupState;
   grid: Grid;
   isGridValid: boolean;
   onGridClick: setActiveGridFunc;

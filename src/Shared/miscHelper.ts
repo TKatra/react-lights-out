@@ -20,7 +20,7 @@ export class MiscHelper {
   }
 
   public static deepCopy = (objectToCopy: any) => {
-    return JSON.parse(JSON.stringify(objectToCopy))
+    return JSON.parse(JSON.stringify(objectToCopy));
   }
 
   public static timerToString = (start: number, end: number, showMilliseconds?: boolean): string => {

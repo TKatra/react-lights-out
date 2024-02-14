@@ -11,10 +11,10 @@ function NewGameSetup (props: NewGameSetupProps) {
     const updateValue = MiscHelper.NumberLimiter(inputValue, minAreaLength, maxAreaLength);
 
     if (angle === PlayAreaAngle.X) {
-      props.onPlayAreaChange({ xLength: updateValue, yLength: props.setup.playArea.yLength })
+      props.onPlayAreaChange({ xLength: updateValue, yLength: props.playArea.yLength })
     }
     else {
-      props.onPlayAreaChange({ xLength: props.setup.playArea.xLength, yLength: updateValue })
+      props.onPlayAreaChange({ xLength: props.playArea.xLength, yLength: updateValue })
     }
   }
 
@@ -23,7 +23,7 @@ function NewGameSetup (props: NewGameSetupProps) {
       <label className='d-block mt-3'>Player Name</label>
       <input type="text"
               className='col-12'
-              value={props.setup.playerName}
+              value={props.playerName}
               onChange={(e) => props.onPlayerNameChange(e.target.value)} />
 
       <label className='d-block mt-3'>Play Area Size</label>
@@ -32,14 +32,14 @@ function NewGameSetup (props: NewGameSetupProps) {
                 className='col-5'
                 min={minAreaLength}
                 max={maxAreaLength}
-                value={props.setup.playArea.xLength}
+                value={props.playArea.xLength}
                 onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.X)} />
         <span className='col-2 text-center'>X</span>
         <input type="number"
                 className='col-5'
                 min={minAreaLength}
                 max={maxAreaLength}
-                value={props.setup.playArea.yLength}
+                value={props.playArea.yLength}
                 onChange={(e) => onPlayAreaChange(parseInt(e.target.value), PlayAreaAngle.Y)} />
       </div>
     </>
