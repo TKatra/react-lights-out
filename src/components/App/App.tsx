@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { Phase } from '../../Shared/Enum/gamePhase';
-import { PlayArea } from '../../Shared/Interfaces/playArea';
 import GamePlay from '../GamePlay/GamePlay';
 import NewGameSetup from '../NewGameSetup/NewGameSetup';
 import './App.scss';
@@ -14,22 +12,23 @@ import { useInterval } from '../../Custom Hooks/useInterval';
 import { useBoundStore } from '../../Store/store';
 
 function App () {
-  const [phase, setPhase] = useState<Phase>(Phase.Setup)
-
   const {
-    //Grid
-    activeGrid,
-    isGridValid,
-    moveList,
-    startNewGrid,
-    resetGrid,
-    updateGrid,
+    // Phase
+    currentPhase,
+    setPhase,
     // Setup
     playerName,
     playArea,
     isSetupValid,
     setPlayerName,
     setPlayArea,
+    // Grid
+    activeGrid,
+    isGridValid,
+    moveList,
+    startNewGrid,
+    resetGrid,
+    updateGrid,
     // Timer
     isTimerActive,
     isTimerShown,
@@ -40,7 +39,6 @@ function App () {
     stopTimer,
     hideTimer,
   } = useBoundStore();
-
 
   const startGame = () => {
     const newGrid = GridHelper.CreateGrid(playArea.xLength, playArea.yLength);
@@ -91,7 +89,7 @@ function App () {
                     isGridValid={isGridValid}
                     onGridClick={onUpdateGrid} />
         }
-        <GameOver show={phase === Phase.GameOver}
+        <GameOver show={currentPhase === Phase.GameOver}
                   timerStringMs={getTimerStringWithMs()}
                   moveList={moveList}
                   onStartNewGame={() => startNewGameSetup()}
@@ -99,7 +97,7 @@ function App () {
       </div>
 
       <Modal title='New Game'
-              show={phase === Phase.Setup}
+              show={currentPhase === Phase.Setup}
               closable={false}
               primaryBtnText='Start Game!'
               disablePrimaryBtn={!isSetupValid}

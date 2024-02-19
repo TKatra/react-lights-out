@@ -1,5 +1,5 @@
 import { PlayArea } from "../playArea";
-import { SetupState } from "./setupState";
+import { SetupState } from "../State/setupState";
 
 export interface SetupSlice extends SetupState {
   setPlayerName: (playerName: string) => void;

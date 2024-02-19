@@ -1,4 +1,4 @@
-import { TimerState } from "./timerState";
+import { TimerState } from "../State/timerState";
 
 export interface TimerSlice extends TimerState {
   startTimer: () => void;

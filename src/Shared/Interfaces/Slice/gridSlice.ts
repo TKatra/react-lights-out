@@ -1,6 +1,6 @@
 import { Grid } from "../../Types/grid";
 import { Coordinate } from "../coordinate";
-import { GridState } from "./gridState";
+import { GridState } from "../State/gridState";
 
 export interface GridSlice extends GridState {
   startNewGrid: (grid: Grid) => void;

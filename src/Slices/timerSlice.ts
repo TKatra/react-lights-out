@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { TimerSlice } from "../Shared/Interfaces/State/timerSlice";
+import { TimerSlice } from "../Shared/Interfaces/Slice/timerSlice";
 import { TimerState } from "../Shared/Interfaces/State/timerState";
 import { MiscHelper } from "../Shared/miscHelper";
 

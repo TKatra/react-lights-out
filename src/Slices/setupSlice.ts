@@ -1,6 +1,6 @@
 import { StateCreator } from "zustand";
 import { PlayArea } from "../Shared/Interfaces/playArea";
-import { SetupSlice } from "../Shared/Interfaces/State/setupSlice";
+import { SetupSlice } from "../Shared/Interfaces/Slice/setupSlice";
 import { SetupState } from "../Shared/Interfaces/State/setupState";
 import { MiscHelper } from "../Shared/miscHelper";
 

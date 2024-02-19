@@ -1,6 +1,6 @@
-import { StateCreator } from "zustand/vanilla";
+import { StateCreator } from "zustand";
 import { Coordinate } from "../Shared/Interfaces/coordinate";
-import { GridSlice } from "../Shared/Interfaces/State/gridSlice";
+import { GridSlice } from "../Shared/Interfaces/Slice/gridSlice";
 import { GridState } from "../Shared/Interfaces/State/gridState";
 import { MiscHelper } from "../Shared/miscHelper";
 import { Grid } from "../Shared/Types/grid";
