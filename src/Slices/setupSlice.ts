@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { StateCreator } from "zustand";
 import { PlayArea } from "../Shared/Interfaces/playArea";
+import { SetupSlice } from "../Shared/Interfaces/State/setupSlice";
 import { SetupState } from "../Shared/Interfaces/State/setupState";
 import { MiscHelper } from "../Shared/miscHelper";
 
@@ -9,28 +10,22 @@ const initialState: SetupState = {
     xLength: 3,
     yLength: 3
   },
-  isValid: false
+  isSetupValid: false
 };
 
-export const setupSlice = createSlice({
-  name: 'setup',
-  initialState,
-  reducers : {
-    setPlayerName: (state, action: PayloadAction<string>) => {
-      state.playerName = action.payload;
-      state.isValid = MiscHelper.validateSetup(state);
-    },
-    setPlayArea: (state, action: PayloadAction<PlayArea>) => {
-      state.playArea = action.payload;
-    }
+export const setupSlice: StateCreator<SetupSlice> = (set) => ({
+  ...initialState,
+  setPlayerName: (playerName: string) => {
+    set((state) => ({
+      ...state,
+      playerName: playerName,
+      isSetupValid: MiscHelper.validateSetup(playerName)
+    }));
   },
-  selectors: {
-    selectPlayerName: setup => setup.playerName,
-    selectPlayArea: setup => setup.playArea,
-    selectIsSetupValid: setup => setup.isValid
+  setPlayArea: (playArea: PlayArea) => {
+    set((state) => ({
+      ...state,
+      playArea: playArea
+    }));
   }
 });
-
-export const { setPlayerName, setPlayArea } = setupSlice.actions;
-export const { selectPlayerName, selectPlayArea, selectIsSetupValid } = setupSlice.selectors
-export default setupSlice.reducer;

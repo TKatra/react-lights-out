@@ -1,5 +1,3 @@
-import { SetupState } from "./Interfaces/State/setupState";
-
 export class MiscHelper {
   public static NumberLimiter = (number: number, minValue: number, maxValue: number): number => {
     // Fix for when number is NaN
@@ -11,8 +9,8 @@ export class MiscHelper {
     return number;
   }
 
-  public static validateSetup = (setup: SetupState) => {
-    if (setup.playerName === '') {
+  public static validateSetup = (playerName: string) => {
+    if (playerName === '') {
       return false;
     }
 

@@ -1,6 +1,5 @@
 import { Grid } from "../../Types/grid";
 import { Coordinate } from "../coordinate";
-import { SetupState } from "../State/setupState";
 
 export interface GamePlayProps {
   grid: Grid;

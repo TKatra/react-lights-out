@@ -1,17 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit';
-import gridReducer from '../Slices/gridSlice';
-import setupReducer from '../Slices/setupSlice';
-import timerReducer from '../Slices/timerSlice';
+import { create } from "zustand";
+import { GridSlice } from "../Shared/Interfaces/State/gridSlice";
+import { SetupSlice } from "../Shared/Interfaces/State/setupSlice";
+import { TimerSlice } from "../Shared/Interfaces/State/timerSlice";
+import { gridSlice } from "../Slices/gridSlice";
+import { setupSlice } from "../Slices/setupSlice";
+import { timerSlice } from "../Slices/timerSlice";
 
-export const store = configureStore({
-  reducer: {
-    grid: gridReducer,
-    setup: setupReducer,
-    timer: timerReducer
-  }
-});
-
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch;
+export const useBoundStore = create<GridSlice & SetupSlice & TimerSlice>()((...a) => ({
+  ...gridSlice(...a),
+  ...setupSlice(...a),
+  ...timerSlice(...a)
+}));

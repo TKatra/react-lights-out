@@ -1,5 +1,4 @@
 import { PlayArea } from "../playArea";
-import { SetupState } from "../State/setupState";
 
 export interface NewGameSetupProps {
   playerName: string;

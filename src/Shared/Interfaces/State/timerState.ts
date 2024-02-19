@@ -1,7 +1,6 @@
 export interface TimerState {
-  show: boolean;
-  active: boolean;
+  isTimerShown: boolean;
+  isTimerActive: boolean;
   start: number;
   end: number;
-  id?: NodeJS.Timer;
 }
