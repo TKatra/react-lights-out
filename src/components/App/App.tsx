@@ -34,7 +34,7 @@ function App () {
 
   const startGame = () => {
     const newGrid = GridHelper.CreateGrid(setupState.playArea.xLength, setupState.playArea.yLength);
-
+ 
     gridDispatch({ type: GridActionType.StartNewGrid, payload: newGrid });
     setPhase(Phase.Play);
     startTimer();
