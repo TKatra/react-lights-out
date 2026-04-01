@@ -53,7 +53,7 @@ function App () {
     if (isGridValid) {
       stopTimer();
     }
-
+ 
     const newMoveList = MiscHelper.deepCopy(gridState.moveList) as Coordinate[];
     newMoveList.push(coordinate);
 
